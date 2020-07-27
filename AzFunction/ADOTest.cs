@@ -33,7 +33,7 @@ namespace Microsoft.Hackathon
             try
             {
                 using HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", b64PAT);
 
                 using HttpResponseMessage response = await client.GetAsync(getPRsUri);
