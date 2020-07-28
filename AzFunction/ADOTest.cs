@@ -3,13 +3,20 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Microsoft.TeamFoundation.Build.WebApi;
+using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.WebApi;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
 
 namespace Microsoft.Hackathon
 {
     public static class ADOTest
     {
-        [FunctionName("TimerTriggerCSharp")]
-        public static async void Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
+        [FunctionName("ADOTest")]
+        public static async void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
             if (myTimer.IsPastDue)
             {
@@ -23,28 +30,30 @@ namespace Microsoft.Hackathon
             string organization = Environment.GetEnvironmentVariable("Organization", EnvironmentVariableTarget.Process);
             string project = Environment.GetEnvironmentVariable("Project", EnvironmentVariableTarget.Process);
 
-            // Construct the auth header content
-            string b64PAT = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", PAT)));
+            string collectionUri = $"https://dev.azure.com/{organization}";
+            VssCredentials creds = new VssBasicCredential(string.Empty, PAT);
 
-            // The API endpoint to hit
-            string getPRsUri = $"https://dev.azure.com/{organization}/{project}/_apis/git/pullrequests?api-version=5.1&searchCriteria.status=active";
+            // Connect to Azure DevOps Services
+            VssConnection connection = new VssConnection(new Uri(collectionUri), creds);
 
-            // Make the request
-            try
+            var pullCollection = new List<int>();
+
+            // Get a GitHttpClient to talk to the Git endpoints
+            using (GitHttpClient gitClient = connection.GetClient<GitHttpClient>())
             {
-                using HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", b64PAT);
+                // Get data about a specific repository
+                var repos = await gitClient.GetRepositoriesAsync(project);
+                foreach (var repo in repos)
+                {
+                    var pulls = await gitClient.GetPullRequestsAsync(project, repo.Id, new GitPullRequestSearchCriteria());
+                    foreach (var pull in pulls)
+                    {
+                        pullCollection.Add(pull.PullRequestId);
+                    }
+                }
+            }
 
-                using HttpResponseMessage response = await client.GetAsync(getPRsUri);
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                log.LogInformation(responseBody);
-            }
-            catch (Exception ex)
-            {
-                log.LogError(ex.ToString());
-            }
+            log.LogInformation(string.Join(", ", pullCollection));
         }
     }
 }
