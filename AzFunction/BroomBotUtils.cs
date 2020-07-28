@@ -34,7 +34,7 @@ namespace BroomBot
             string project,
             IList<GitPullRequest> pullRequests,
             DateTime staleDate,
-            string botName)
+            string botId)
         {
             Dictionary<GitPullRequest, bool> pullCollection = new Dictionary<GitPullRequest, bool>();
 
@@ -42,13 +42,13 @@ namespace BroomBot
             {
                 IList<GitPullRequestCommentThread> threads = await gitClient.GetThreadsAsync(project, pr.Repository.Id, pr.PullRequestId);
 
-                GitPullRequestCommentThread lastUpdated = threads.OrderBy(p => p.LastUpdatedDate).FirstOrDefault();
+                GitPullRequestCommentThread lastUpdated = threads.OrderByDescending(p => p.LastUpdatedDate).FirstOrDefault();
 
                 // Stale PRs have never been updated, or haven't been updated since the staleDate
                 if (lastUpdated == null || lastUpdated.LastUpdatedDate < staleDate)
                 {
                     // Knowing whether or not the last comment was from the bot will tell us if we need to check for tags or not
-                    bool commentByBot = lastUpdated != null && lastUpdated.Comments.Last().Author.Descriptor.Identifier == botName;
+                    bool commentByBot = lastUpdated != null && lastUpdated.Comments.Last().Author.Id == botId;
                     pullCollection.Add(pr, commentByBot);
                 }
             }
@@ -70,7 +70,7 @@ namespace BroomBot
                 // Add a comment to the PR describing that it's stale
                 Comment comment = new Comment
                 {
-                    Content = $"@{pr.Key.CreatedBy.Descriptor.Identifier} - This pull request is stale. Please update it or it risks being abandoned."
+                    Content = $"@<{pr.Key.CreatedBy.UniqueName}> - This pull request is stale. Please update it or it risks being abandoned."
                 };
                 List<Comment> commentList = new List<Comment>
                 {
@@ -79,7 +79,9 @@ namespace BroomBot
 
                 GitPullRequestCommentThread commentThread = new GitPullRequestCommentThread
                 {
-                    Comments = commentList
+                    Comments = commentList,
+                    Status = CommentThreadStatus.Active
+
                 };
                 await gitClient.CreateThreadAsync(commentThread, pr.Key.Repository.Id, pr.Key.PullRequestId);
 

@@ -25,7 +25,6 @@ namespace BroomBot
             string PAT = Environment.GetEnvironmentVariable("PAT", EnvironmentVariableTarget.Process);
             string organization = Environment.GetEnvironmentVariable("Organization", EnvironmentVariableTarget.Process);
             string project = Environment.GetEnvironmentVariable("Project", EnvironmentVariableTarget.Process);
-            string broomBotName = Environment.GetEnvironmentVariable("ADOAccountName", EnvironmentVariableTarget.Process);
             int staleAge = Convert.ToInt32(Environment.GetEnvironmentVariable("StaleAge", EnvironmentVariableTarget.Process));
             int warningCount = Convert.ToInt32(Environment.GetEnvironmentVariable("WarningCount", EnvironmentVariableTarget.Process));
             string warningPrefix = Environment.GetEnvironmentVariable("WarningPrefix", EnvironmentVariableTarget.Process);
@@ -35,6 +34,7 @@ namespace BroomBot
 
             // Connect to Azure DevOps Services
             VssConnection connection = new VssConnection(new Uri(collectionUri), creds);
+            string botId = connection.AuthorizedIdentity.Id.ToString();
 
             // Get a GitHttpClient to talk to the Git endpoints
             using (GitHttpClient gitClient = connection.GetClient<GitHttpClient>())
@@ -61,7 +61,7 @@ namespace BroomBot
 
                 // which PRs haven't had a comment since staledate, and if the last comment is from the bot
                 Dictionary<GitPullRequest, bool> stalePRs = await BroomBotUtils.CheckPullRequestFreshness(
-                    gitClient, project, createdBeforeStaleDate, staleDate, broomBotName);
+                    gitClient, project, createdBeforeStaleDate, staleDate, botId);
 
                 if (stalePRs.Count == 0)
                 {
