@@ -16,10 +16,14 @@ namespace BroomBot
         {
             List<GitPullRequest> pullCollection = new List<GitPullRequest>();
             List<GitRepository> repos = await gitClient.GetRepositoriesAsync(project);
+            GitPullRequestSearchCriteria searchCriteria = new GitPullRequestSearchCriteria
+            {
+                Status = PullRequestStatus.Active
+            };
 
             foreach (GitRepository repo in repos)
             {
-                var pulls = await gitClient.GetPullRequestsAsync(project, repo.Id, new GitPullRequestSearchCriteria());
+                var pulls = await gitClient.GetPullRequestsAsync(project, repo.Id, searchCriteria);
 
                 foreach (var pull in pulls)
                 {
@@ -129,16 +133,11 @@ namespace BroomBot
             {
                 try
                 {
-                    JsonPatchDocument patchDocument = new JsonPatchDocument
+                    GitPullRequest updatedPr = new GitPullRequest()
                     {
-                        new JsonPatchOperation
-                        {
-                            Operation = Operation.Replace,
-                            Path = "/status",
-                            Value = "Abandoned"
-                        }
+                        Status = PullRequestStatus.Abandoned,
                     };
-                    await gitClient.UpdatePullRequestPropertiesAsync(patchDocument, pr.Repository.Id, pr.PullRequestId);
+                    await gitClient.UpdatePullRequestAsync(updatedPr, pr.Repository.Id, pr.PullRequestId);
                 }
                 catch
                 {
