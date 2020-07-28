@@ -73,6 +73,14 @@ namespace BroomBot
                 IList<GitPullRequest> abandonmentCandidates = await BroomBotUtils.TagStalePRs(gitClient, project, stalePRs, warningPrefix, warningCount);
 
                 // PRs that need to be abandoned
+                if (abandonmentCandidates.Count == 0)
+                {
+                    log.LogInformation("Found no PR in need of abandonment");
+                    return;
+                }
+
+                bool abandonmentSuccess = await BroomBotUtils.AbandonPullRequests(gitClient, abandonmentCandidates);
+                if (!abandonmentSuccess) log.LogError("Did not correctly abandon all relevant PRs");
             }
 
             log.LogInformation($"Finished sweep: {DateTime.Now}");

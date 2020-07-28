@@ -4,7 +4,8 @@ using Microsoft.TeamFoundation.Core.WebApi;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
-
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
+using Microsoft.VisualStudio.Services.WebApi.Patch;
 namespace BroomBot
 {
     public static class BroomBotUtils
@@ -120,6 +121,33 @@ namespace BroomBot
             }
 
             return pullCollection;
+        }
+
+        public static async Task<bool> AbandonPullRequests(GitHttpClient gitClient, IList<GitPullRequest> abandonmentCandidates)
+        {
+            foreach (GitPullRequest pr in abandonmentCandidates)
+            {
+                try
+                {
+                    JsonPatchDocument patchDocument = new JsonPatchDocument
+                    {
+                        new JsonPatchOperation
+                        {
+                            Operation = Operation.Replace,
+                            Path = "/status",
+                            Value = "Abandoned"
+                        }
+                    };
+                    await gitClient.UpdatePullRequestPropertiesAsync(patchDocument, pr.Repository.Id, pr.PullRequestId);
+                }
+                catch
+                {
+                    return false;
+                }
+                    
+            }
+            
+            return true;
         }
     }
 }
