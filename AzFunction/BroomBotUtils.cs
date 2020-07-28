@@ -64,6 +64,10 @@ namespace BroomBot
             int warningCount)
         {
             List<GitPullRequest> pullCollection = new List<GitPullRequest>();
+            WebApiCreateTagRequestData newLabel = new WebApiCreateTagRequestData
+            {
+                Name = string.Format("{0}: (UTC) {1}", warningPrefix, DateTime.UtcNow.ToString("g"))
+            };
 
             foreach (KeyValuePair<GitPullRequest, bool> pr in stalePRs)
             {
@@ -87,10 +91,6 @@ namespace BroomBot
 
                 // Handle the tag updating
                 List<WebApiTagDefinition> allTags = await gitClient.GetPullRequestLabelsAsync(project, pr.Key.Repository.Id, pr.Key.PullRequestId);
-                WebApiCreateTagRequestData newLabel = new WebApiCreateTagRequestData
-                {
-                    Name = string.Format("{0}: (UTC) {1}", warningPrefix, DateTime.UtcNow.ToString("g"))
-                };
 
                 if (!pr.Value)
                 {
