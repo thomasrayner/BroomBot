@@ -27,6 +27,8 @@ namespace BroomBot
             string project = Environment.GetEnvironmentVariable("Project", EnvironmentVariableTarget.Process);
             string broomBotName = Environment.GetEnvironmentVariable("ADOAccountName", EnvironmentVariableTarget.Process);
             int staleAge = Convert.ToInt32(Environment.GetEnvironmentVariable("StaleAge", EnvironmentVariableTarget.Process));
+            int warningCount = Convert.ToInt32(Environment.GetEnvironmentVariable("WarningCount", EnvironmentVariableTarget.Process));
+            string warningPrefix = Environment.GetEnvironmentVariable("WarningPrefix", EnvironmentVariableTarget.Process);
 
             string collectionUri = $"https://dev.azure.com/{organization}";
             VssCredentials creds = new VssBasicCredential(string.Empty, PAT);
@@ -46,7 +48,9 @@ namespace BroomBot
                     return;
                 }
 
-                DateTime staleDate = DateTime.Now.AddHours(-staleAge);
+                DateTime staleDate = DateTime.Now.AddHours(-staleAge).ToUniversalTime();
+
+                // Find PRs that were created before the stale date, otherwise they're too new to be relevant
                 IList<GitPullRequest> createdBeforeStaleDate = allPRs.Where(p => p.CreationDate < staleDate).ToList();
 
                 if (createdBeforeStaleDate.Count == 0)
@@ -55,9 +59,9 @@ namespace BroomBot
                     return;
                 }
 
-                // which PRs haven't had a comment since staledate
-                IList<GitPullRequest> stalePRs = await BroomBotUtils.CheckPullRequestFreshness(
-                    gitClient, project, createdBeforeStaleDate, staleDate);
+                // which PRs haven't had a comment since staledate, and if the last comment is from the bot
+                Dictionary<GitPullRequest, bool> stalePRs = await BroomBotUtils.CheckPullRequestFreshness(
+                    gitClient, project, createdBeforeStaleDate, staleDate, broomBotName);
 
                 if (stalePRs.Count == 0)
                 {
@@ -65,7 +69,8 @@ namespace BroomBot
                     return;
                 }
 
-                // PRs that are stale whose last comment is from broombot
+                // tag & update stale PRs and return candidates for abandonment
+                IList<GitPullRequest> abandonmentCandidates = await BroomBotUtils.TagStalePRs(gitClient, project, stalePRs, warningPrefix, warningCount);
 
                 // PRs that need to be abandoned
             }
