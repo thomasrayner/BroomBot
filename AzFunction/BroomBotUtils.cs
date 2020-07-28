@@ -74,7 +74,7 @@ namespace BroomBot
                 // Add a comment to the PR describing that it's stale
                 Comment comment = new Comment
                 {
-                    Content = $"@<{pr.Key.CreatedBy.UniqueName}> - This pull request is stale. Please update it or it risks being abandoned."
+                    Content = $"@{pr.Key.CreatedBy.UniqueName} - This pull request is stale. Please update it or it risks being abandoned."
                 };
                 List<Comment> commentList = new List<Comment>
                 {
@@ -105,11 +105,14 @@ namespace BroomBot
                 else
                 {
                     // check how many tags are already on it, if it's more than the warning threshold, add it to the list of returned PRs
-                    // no need to add another tag because this PR is going to be abandoned
                     int botTagCount = allTags.Where(t => t.Name.StartsWith(warningPrefix)).Count();
 
-                    if (botTagCount >= warningCount) pullCollection.Add(pr.Key);
-                    continue;
+                    if (botTagCount >= warningCount)
+                    {
+                        // no need to add another tag because this PR is going to be abandoned
+                        pullCollection.Add(pr.Key);
+                        continue;
+                    }
                 }
 
                 // add a tag
