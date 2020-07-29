@@ -23,14 +23,10 @@ namespace BroomBot
             {
                 foreach (KeyValuePair<string, JToken> app in root)
                 {
-                    PropertyInfo info = GetType().GetProperty((string)app.Value["Name"]);
+                    PropertyInfo info = GetType().GetProperty(app.Key);
                     info.SetValue(this, (string)app.Value["Value"]);
                 }
             }
-
         }
     }
 }
-
-
-
