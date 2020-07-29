@@ -35,6 +35,23 @@
 			}
 		},
 		{
+			"label": "copy config",
+			"command": "pwsh",
+			"args": [
+				"-c",
+				"Copy-Item ${workspaceFolder}/AzFunction/config/UserStrings.json ${workspaceFolder}/AzFunction/bin/Debug/netcoreapp3.1/SweepBroom/"
+			],
+			"type": "process",
+			"dependsOn": "build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}/AzFunction"
+			}
+		},
+		{
 			"label": "clean release",
 			"command": "dotnet",
 			"args": [
@@ -61,15 +78,32 @@
 				"/consoleloggerparameters:NoSummary"
 			],
 			"type": "process",
-			"dependsOn": "clean release",
+			"dependsOn": "copy config release",
 			"problemMatcher": "$msCompile",
 			"options": {
 				"cwd": "${workspaceFolder}/AzFunction"
 			}
 		},
 		{
+			"label": "copy config release",
+			"command": "pwsh",
+			"args": [
+				"-c",
+				"Copy-Item ${workspaceFolder}/AzFunction/config/UserStrings.json ${workspaceFolder}/AzFunction/bin/Release/netcoreapp3.1/SweepBroom/"
+			],
+			"type": "process",
+			"dependsOn": "publish",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}/AzFunction"
+			}
+		},
+		{
 			"type": "func",
-			"dependsOn": "build",
+			"dependsOn": "copy config",
 			"options": {
 				"cwd": "${workspaceFolder}/AzFunction/bin/Debug/netcoreapp3.1"
 			},

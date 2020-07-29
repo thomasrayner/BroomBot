@@ -4,8 +4,6 @@ using Microsoft.TeamFoundation.Core.WebApi;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
-using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
-using Microsoft.VisualStudio.Services.WebApi.Patch;
 namespace BroomBot
 {
     public static class BroomBotUtils
@@ -61,12 +59,13 @@ namespace BroomBot
             return pullCollection;
         }
 
-        public static async Task<IList<GitPullRequest>> TagStalePRs(
+        public static async Task<IList<GitPullRequest>> TagStalePullRequests(
             GitHttpClient gitClient,
             string project,
             Dictionary<GitPullRequest, bool> stalePRs,
             string warningPrefix,
-            int warningCount)
+            int warningCount,
+            string warningMessage)
         {
             List<GitPullRequest> pullCollection = new List<GitPullRequest>();
             WebApiCreateTagRequestData newLabel = new WebApiCreateTagRequestData
@@ -79,7 +78,8 @@ namespace BroomBot
                 // Add a comment to the PR describing that it's stale
                 Comment comment = new Comment
                 {
-                    Content = $"@{pr.Key.CreatedBy.UniqueName} - This pull request is stale. Please update it or it risks being abandoned."
+                    // STRING UPDATE
+                    Content = string.Format(warningMessage, pr.Key.CreatedBy.UniqueName)
                 };
                 List<Comment> commentList = new List<Comment>
                 {
@@ -127,7 +127,9 @@ namespace BroomBot
             return pullCollection;
         }
 
-        public static async Task<bool> AbandonPullRequests(GitHttpClient gitClient, IList<GitPullRequest> abandonmentCandidates)
+        public static async Task<bool> AbandonPullRequests(
+            GitHttpClient gitClient,
+            IList<GitPullRequest> abandonmentCandidates)
         {
             foreach (GitPullRequest pr in abandonmentCandidates)
             {
