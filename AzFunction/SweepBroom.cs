@@ -30,7 +30,7 @@ namespace BroomBot
             string project = Environment.GetEnvironmentVariable("Project", EnvironmentVariableTarget.Process);
 
             // Set up the user strings
-            string configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"..\SweepBroom\UserStrings.json");
+            string configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"..\config\UserStrings.json");
             BroomBotStrings userStrings = new BroomBotStrings(configPath);
             int staleAge = Convert.ToInt32(userStrings.StaleAge);
             int warningCount = Convert.ToInt32(userStrings.WarningCount);
