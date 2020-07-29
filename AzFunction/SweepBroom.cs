@@ -15,7 +15,7 @@ namespace BroomBot
     public static class SweepBroom
     {
         [FunctionName("SweepBroom")]
-        public static async void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
+        public static async void Run([TimerTrigger("0 0 */12 * * *")] TimerInfo myTimer, ILogger log)
         {
             if (myTimer.IsPastDue)
             {
