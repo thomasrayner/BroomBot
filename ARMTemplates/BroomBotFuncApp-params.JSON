@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionAppName": {
+            "type": "string",
+		    "metadata": {
+		        "description": "The name of the function app that you wish to create."
+		    },
+            "value": "[concat('BrmBot', take(uniqueString(resourceGroup().id),5))]"
+        },
+        
+        "storageAccName" : {
+            "type": "string",
+            "value": "[concat(take(uniqueString(resourceGroup().id),5),'BrmBotStr')]"
+        },
+        "storageAccountType": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_RAGRS"
+            ],
+            "metadata": {
+                "description": "Storage Account type"
+            },
+            "value": "Standard_LRS"
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Location for all resources."
+            },
+            "value": "[resourceGroup().location]"
+        },
+        "runtime": {
+            "type": "string",
+            "allowedValues": [
+                "node",
+                "dotnet",
+                "java"
+            ],
+            "metadata": {
+                "description": "The language worker runtime to load in the function app."
+            },
+            "value": "dotnet"
+        },
+        "PAT" :{
+            "type": "securestring",
+            "value": ""
+        },
+        "organization" : {
+            "type": "string",
+            "value": ""
+        },
+        "project": {
+            "type": "string",
+            "value": ""
+        }
+    }
+}
