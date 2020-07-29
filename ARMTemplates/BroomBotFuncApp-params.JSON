@@ -45,30 +45,38 @@
         },
         "PAT" :{
             "type": "securestring",
-            "value": "",
             "metadata": {
                 "description" : "the personal access token for ADO pipelines"
-            }
+            },
+            "value": ""
         },
         "organization" : {
             "type": "string",
-            "value": " ADO organization name"
+            "metadata": {
+                "description": "provide the ADO organization name"
+            },
+            "value": ""
         },
         "project": {
             "type": "string",
-            "value": "ADO project"
+            "metadata": {
+                "description": "provide the ADO project name"
+            },
+            "value" : ""            
         },
-        "storageaccendpoint": {
-            "type": "string"
-        },
-        "artifactsUri": {
-        "type": "string"
-        },
-        "artifactsBlobContainer": {
-        "type": "string"
-        },    
-        "artifactsLocationSasToken": {
-        "type": "string"
+        "gitHubUrl" : {
+		    "type": "string",
+            "metadata": {
+                "description": "Name of the public GitHUb URL"
+            },
+            "value": "https://github.com/thomasrayner/BroomBot.git"
+	    },
+        "gitHubBranch": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the branch to use when deploying (Default = master)."
+            },
+            "value": "master"
         }
     }
 }
