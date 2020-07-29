@@ -79,7 +79,7 @@ namespace BroomBot
                 Comment comment = new Comment
                 {
                     // STRING UPDATE
-                    Content = string.Format(warningMessage, pr.Key.CreatedBy.UniqueName)
+                    Content = string.Format(warningMessage, pr.Key.CreatedBy.Id)
                 };
                 List<Comment> commentList = new List<Comment>
                 {

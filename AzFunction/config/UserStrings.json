@@ -2,7 +2,7 @@
     {
         "PullRequestIsStale": {
             "Name": "PullRequestIsStale",
-            "Value": "{0} - This pull request is stale and may be abandoned soon if you don't do something.",
+            "Value": "@<{0}> - This pull request is stale and may be abandoned soon if you don't do something.",
             "Description": "The message that is written by BroomBot as a comment on a stale pull request. Use {0} tag the creator of the pull request."
         },
         "BroomBotName": {
