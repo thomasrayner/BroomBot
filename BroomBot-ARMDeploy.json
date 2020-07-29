@@ -14,9 +14,6 @@
 	  "location": {
 		  "type": "string"
 	  },
-	  "runtime": {
-		"type": "string"
-	  },
 	  "gitHubUrl" : {
 		  "type": "string"
 	  },
@@ -28,13 +25,20 @@
       },
       "organization" : {
       	"type": "string"
+	  },
+      "project" : {
+      	"type": "string"
+	  },
+      "SweepInterval" : {
+      	"type": "string"
+	  }
 	},
 	"variables": {
 	  "serverFarmName": "[concat(parameters('functionAppName'),'-consumption')]",
 	  "applicationInsightsName": "[concat(parameters('functionAppName'), 'appinsights')]",
-	  "functionWorkerRuntime": "[parameters('runtime')]",
+	  "functionWorkerRuntime": "dotnet",
 	  "insightsLocation": {
-		"AzureCloud": "westus2",
+		"AzureCloud": "[parameters('location')]",
 		"AzureUSGovernment": "usgovvirginia"
 	  }
 	},
@@ -91,7 +95,7 @@
 				},
 				{
 					"name": "FUNCTIONS_EXTENSION_VERSION",
-					"value": "~2"
+					"value": "~3"
 				},
 				{
 					"name": "WEBSITE_NODE_DEFAULT_VERSION",
@@ -104,6 +108,22 @@
 				{
 					"name": "FUNCTIONS_WORKER_RUNTIME",
 					"value": "[variables('functionWorkerRuntime')]"
+				},
+				{
+					"name": "PAT",
+					"value": "[parameters('PAT')]"
+				},
+				{
+					"name": "Organization",
+					"value": "[parameters('organization')]"
+				},
+				{
+					"name": "Project",
+					"value": "[parameters('project')]"
+				},
+				{
+					"name": "SweepInterval",
+					"value": "[parameters('SweepInterval')]"
 				}
 			]
 		  }
