@@ -36,9 +36,7 @@
         "runtime": {
             "type": "string",
             "allowedValues": [
-                "node",
-                "dotnet",
-                "java"
+                "dotnet"
             ],
             "metadata": {
                 "description": "The language worker runtime to load in the function app."
@@ -59,6 +57,18 @@
         "project": {
             "type": "string",
             "value": "ADO project"
+        },
+        "storageaccendpoint": {
+            "type": "string"
+        },
+        "artifactsUri": {
+        "type": "string"
+        },
+        "artifactsBlobContainer": {
+        "type": "string"
+        },    
+        "artifactsLocationSasToken": {
+        "type": "string"
         }
     }
 }
