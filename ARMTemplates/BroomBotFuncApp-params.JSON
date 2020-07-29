@@ -47,15 +47,18 @@
         },
         "PAT" :{
             "type": "securestring",
-            "value": ""
+            "value": "",
+            "metadata": {
+                "description" : "the personal access token for ADO pipelines"
+            }
         },
         "organization" : {
             "type": "string",
-            "value": ""
+            "value": " ADO organization name"
         },
         "project": {
             "type": "string",
-            "value": ""
+            "value": "ADO project"
         }
     }
 }
