@@ -27,10 +27,6 @@ namespace BroomBot
                     info.SetValue(this, (string)app.Value["Value"]);
                 }
             }
-
         }
     }
 }
-
-
-

@@ -85,12 +85,10 @@ namespace BroomBot
                 {
                     comment
                 };
-
                 GitPullRequestCommentThread commentThread = new GitPullRequestCommentThread
                 {
                     Comments = commentList,
                     Status = CommentThreadStatus.Active
-
                 };
                 await gitClient.CreateThreadAsync(commentThread, pr.Key.Repository.Id, pr.Key.PullRequestId);
 
@@ -145,7 +143,6 @@ namespace BroomBot
                 {
                     return false;
                 }
-                    
             }
             
             return true;
