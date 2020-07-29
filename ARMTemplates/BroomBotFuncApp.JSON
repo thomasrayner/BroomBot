@@ -22,7 +22,12 @@
 	  },
 	  "gitHubBranch": {
           "type": "string"
-      }
+      },
+	  "PAT" :{
+		"type": "securestring"
+      },
+      "organization" : {
+      	"type": "string"
 	},
 	"variables": {
 	  "serverFarmName": "[concat(parameters('functionAppName'),'-consumption')]",
