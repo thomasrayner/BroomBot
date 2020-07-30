@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionAppName": {
+            "metadata": {
+                "description": "The name of the function app for BroomBot"
+            },
+            "value": "broombotapp"
+        },
+        "storageAccName": {
+            "metadata": {
+                "description": "The name of the storage account for BroomBot"
+            },
+            "value": "broombotstorage"
+        },
+        "storageAccountType": {
+            "metadata": {
+                "description": "Storage account type"
+            },
+            "value": "Standard_LRS"
+        },
+        "location": {
+            "metadata": {
+                "description": "Azure region"
+            },
+            "value": "West US 2"
+        },
+        "PAT": {
+            "metadata": {
+                "description": "The personal access token for your BroomBot service account"
+            },
+            "value": ""
+        },
+        "organization": {
+            "metadata": {
+                "description": "Provide the Azure DevOps organization name"
+            },
+            "value": "your-organization"
+        },
+        "project": {
+            "metadata": {
+                "description": "Provide the Azure DevOps project name"
+            },
+            "value": "your-project"
+        },
+        "SweepInterval": {
+            "metadata": {
+                "description": "NCRONTAB expression for how often sweeps will take place (more info: https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer?tabs=csharp#ncrontab-expressions)"
+            },
+            "value": "0 0 */12 * * *"
+        },
+        "gitHubUrl": {
+            "metadata": {
+                "description": "The URL for your fork of BroomBot"
+            },
+            "value": "https://github.com/thomasrayner/BroomBot.git"
+        },
+        "gitHubBranch": {
+            "metadata": {
+                "description": "Name of the branch to use when deploying (Default = master)."
+            },
+            "value": "master"
+        }
+    }
+}

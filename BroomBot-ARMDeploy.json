@@ -1,0 +1,163 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+	  "functionAppName": {
+		"type": "string"
+	  },
+	  "storageAccName" : {
+		  "type": "string"
+	  },
+	  "storageAccountType": {
+		"type": "string"
+	  },
+	  "location": {
+		  "type": "string"
+	  },
+	  "gitHubUrl" : {
+		  "type": "string"
+	  },
+	  "gitHubBranch": {
+          "type": "string"
+      },
+	  "PAT" :{
+		"type": "securestring"
+      },
+      "organization" : {
+      	"type": "string"
+	  },
+      "project" : {
+      	"type": "string"
+	  },
+      "SweepInterval" : {
+      	"type": "string"
+	  }
+	},
+	"variables": {
+	  "serverFarmName": "[concat(parameters('functionAppName'),'-consumption')]",
+	  "applicationInsightsName": "[concat(parameters('functionAppName'), 'appinsights')]",
+	  "functionWorkerRuntime": "dotnet",
+	  "insightsLocation": {
+		"AzureCloud": "[parameters('location')]",
+		"AzureUSGovernment": "usgovvirginia"
+	  }
+	},
+	"resources": [
+	  {
+		"type": "Microsoft.Storage/storageAccounts",
+		"name": "[parameters('storageAccName')]",
+		"apiVersion": "2019-06-01",
+		"location": "[parameters('location')]",
+		"kind": "Storage",
+		"sku": {
+		  "name": "[parameters('storageAccountType')]"
+		}
+	  },
+	  {
+		"type": "Microsoft.Web/serverfarms",
+		"apiVersion": "2019-08-01",
+		"name": "[variables('serverFarmName')]",
+		"location": "[parameters('location')]",
+		"sku": {
+		  "name": "Y1",
+		  "tier": "Dynamic"
+		},
+		"properties": {
+		  "name": "[variables('serverFarmName')]",
+		  "computeMode": "Dynamic"
+		}
+	  },
+	  {
+		"apiVersion": "2019-08-01",
+		"type": "Microsoft.Web/sites",
+		"name": "[parameters('functionAppName')]",
+		"location": "[parameters('location')]",
+		"kind": "functionapp",
+		"dependsOn": [
+		  "[resourceId('Microsoft.Web/serverfarms', variables('serverFarmName'))]",
+		  "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccName'))]"
+		],
+		"properties": {
+		  "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverFarmName'))]",
+		  "siteConfig": {
+			"appSettings": [
+				{
+					"name": "AzureWebJobsStorage",
+					"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccName')), '2019-06-01').keys[0].value)]"
+				},
+				{
+					"name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+					"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccName')), '2019-06-01').keys[0].value)]"
+				},
+				{
+					"name": "WEBSITE_CONTENTSHARE",
+					"value": "[toLower(parameters('functionAppName'))]"
+				},
+				{
+					"name": "FUNCTIONS_EXTENSION_VERSION",
+					"value": "~3"
+				},
+				{
+					"name": "WEBSITE_NODE_DEFAULT_VERSION",
+					"value": "~10"
+				},
+				{
+					"name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+					"value": "[reference(resourceId('microsoft.insights/components', variables('applicationInsightsName')), '2018-05-01-preview').InstrumentationKey]"
+				},
+				{
+					"name": "FUNCTIONS_WORKER_RUNTIME",
+					"value": "[variables('functionWorkerRuntime')]"
+				},
+				{
+					"name": "PAT",
+					"value": "[parameters('PAT')]"
+				},
+				{
+					"name": "Organization",
+					"value": "[parameters('organization')]"
+				},
+				{
+					"name": "Project",
+					"value": "[parameters('project')]"
+				},
+				{
+					"name": "SweepInterval",
+					"value": "[parameters('SweepInterval')]"
+				}
+			]
+		  }
+		},
+		"resources": [
+			{
+				"apiVersion": "2015-08-01",
+                "name": "web",
+                "type": "sourcecontrols",
+                "dependsOn": [
+                      "[resourceId('Microsoft.Web/sites/', parameters('functionAppName'))]"
+                ],
+                "properties": {
+                	"RepoUrl": "[parameters('gitHubUrl')]",
+                    "branch": "[parameters('gitHubBranch')]",
+                    "publishRunbook": true,
+                    "IsManualIntegration": true
+                }
+            }
+		]
+	  },
+	  {
+		"apiVersion": "2018-05-01-preview",
+		"name": "[variables('applicationInsightsName')]",
+		"type": "microsoft.insights/components",
+		"location": "[variables('insightsLocation')[environment().name]]",
+		"tags": {
+		  "[concat('hidden-link:', resourceId('Microsoft.Web/sites', variables('applicationInsightsName')))]": "Resource"
+		},
+		"properties": {
+		  "ApplicationId": "[variables('applicationInsightsName')]",
+		  "Request_Source": "IbizaWebAppExtensionCreate"
+		}
+	  }
+	]
+  }
+  
