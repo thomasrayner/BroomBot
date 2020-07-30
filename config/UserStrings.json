@@ -13,7 +13,7 @@
             "Description": "A prefix on the tags BroomBot applies to stale pull requests. The tag has the format 'WarningPrefix: (UTC) DateTimeStamp' so maintainers and administrators may keep track of BroomBot's warnings."
         },
         "StaleAge": {
-            "Value": "336",
+            "Value": "0",
             "Description": "The number of hours a pull request can go without any activity before the pull request is considered stale. 336 hours (default) is 14 days."
         },
         "WarningCount": {
