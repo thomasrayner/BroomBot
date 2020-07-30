@@ -2,17 +2,21 @@
 	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
 	"parameters": {
-	  "functionAppName": {
-		"type": "string"
+	  "functionAppPrefix": {
+		"type": "string",
+		"defaultvalue" : "fnapp"		
 	  },
-	  "storageAccName" : {
-		  "type": "string"
-	  },
-	  "storageAccountType": {
-		"type": "string"
+	  "storageAccPrefix" : {
+		  "type": "string",
+		  "defaultvalue" : "stor"
 	  },
 	  "location": {
-		  "type": "string"
+		"type": "string",
+		"defaultvalue" : "westus"
+	  },
+	  "storageAccountType": {
+        "type": "string",
+		"defaultvalue" : "Standard_LRS"
 	  },
 	  "runtime": {
 		"type": "string"
@@ -28,10 +32,16 @@
       },
       "organization" : {
       	"type": "string"
+	  },
+	  "project": {
+		  "type": "string"
+	  }
 	},
 	"variables": {
-	  "serverFarmName": "[concat(parameters('functionAppName'),'-consumption')]",
-	  "applicationInsightsName": "[concat(parameters('functionAppName'), 'appinsights')]",
+	  "fnAppName" : "[concat(parameters('functionAppPrefix'),substring(uniqueString(resourceGroup().id),0,5))]",
+	  "strAccName" : "[concat(parameters('storageAccPrefix'), substring(uniqueString(resourceGroup().id),0,5))]",
+	  "serverFarmName": "[concat(variables('fnAppName'),'-ASP')]",
+	  "applicationInsightsName": "[concat(variables('fnAppName'), '-appinsights')]",
 	  "functionWorkerRuntime": "[parameters('runtime')]",
 	  "insightsLocation": {
 		"AzureCloud": "westus2",
@@ -41,7 +51,7 @@
 	"resources": [
 	  {
 		"type": "Microsoft.Storage/storageAccounts",
-		"name": "[parameters('storageAccName')]",
+		"name": "[variables('strAccName')]",
 		"apiVersion": "2019-06-01",
 		"location": "[parameters('location')]",
 		"kind": "Storage",
@@ -66,12 +76,12 @@
 	  {
 		"apiVersion": "2019-08-01",
 		"type": "Microsoft.Web/sites",
-		"name": "[parameters('functionAppName')]",
+		"name": "[variables('fnAppName')]",
 		"location": "[parameters('location')]",
 		"kind": "functionapp",
 		"dependsOn": [
 		  "[resourceId('Microsoft.Web/serverfarms', variables('serverFarmName'))]",
-		  "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccName'))]"
+		  "[resourceId('Microsoft.Storage/storageAccounts', variables('strAccName'))]"
 		],
 		"properties": {
 		  "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverFarmName'))]",
@@ -79,19 +89,19 @@
 			"appSettings": [
 				{
 					"name": "AzureWebJobsStorage",
-					"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccName')), '2019-06-01').keys[0].value)]"
+					"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('strAccName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccName')), '2019-06-01').keys[0].value)]"
 				},
 				{
 					"name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-					"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccName')), '2019-06-01').keys[0].value)]"
+					"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('strAccName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccName')), '2019-06-01').keys[0].value)]"
 				},
 				{
 					"name": "WEBSITE_CONTENTSHARE",
-					"value": "[toLower(parameters('functionAppName'))]"
+					"value": "[toLower(variables('fnAppName'))]"
 				},
 				{
 					"name": "FUNCTIONS_EXTENSION_VERSION",
-					"value": "~2"
+					"value": "~3"
 				},
 				{
 					"name": "WEBSITE_NODE_DEFAULT_VERSION",
@@ -114,7 +124,7 @@
                 "name": "web",
                 "type": "sourcecontrols",
                 "dependsOn": [
-                      "[resourceId('Microsoft.Web/sites/', parameters('functionAppName'))]"
+                      "[resourceId('Microsoft.Web/sites/', variables('fnAppName'))]"
                 ],
                 "properties": {
                 	"RepoUrl": "[parameters('gitHubUrl')]",
