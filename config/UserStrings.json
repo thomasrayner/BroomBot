@@ -17,7 +17,7 @@
         },
         "StaleAge": {
             "Name": "StaleAge",
-            "Value": "24",
+            "Value": "0",
             "Description": "The number of hours a pull request can go without any activity before the pull request is considered stale."
         },
         "WarningCount": {

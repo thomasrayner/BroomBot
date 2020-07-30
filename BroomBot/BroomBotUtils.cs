@@ -79,18 +79,16 @@ namespace BroomBot
                 Comment comment = new Comment
                 {
                     // STRING UPDATE
-                    Content = string.Format(warningMessage, pr.Key.CreatedBy.UniqueName)
+                    Content = string.Format(warningMessage, pr.Key.CreatedBy.Id)
                 };
                 List<Comment> commentList = new List<Comment>
                 {
                     comment
                 };
-
                 GitPullRequestCommentThread commentThread = new GitPullRequestCommentThread
                 {
                     Comments = commentList,
                     Status = CommentThreadStatus.Active
-
                 };
                 await gitClient.CreateThreadAsync(commentThread, pr.Key.Repository.Id, pr.Key.PullRequestId);
 
@@ -145,7 +143,6 @@ namespace BroomBot
                 {
                     return false;
                 }
-                    
             }
             
             return true;
