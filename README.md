@@ -1,4 +1,4 @@
-![BroomBot Logo](img/broombot-text.png)
+<img src="img/broombot-text.png" alt="BroomBot Logo" width="20%"/>
 
 # BroomBot
 
