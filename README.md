@@ -10,6 +10,19 @@ GitHub has a rich ecosystem of bots and helper tools that (among other things) e
 
 **BroomBot** periodically checks your Azure DevOps repos for pull requests that haven't been updated in a while and reminds the person who opened it to attend to their PR. After a few reminders, **BroomBot** will abandon the stale PR.
 
+### Features
+
+**BroomBot** is very customizable. **BroomBot** can:
+
+* Scan for stale pull requests as often as you want
+* Give as many warnings as you want
+* Mark stale pull requests as abandoned once enough warnings have been given
+* You can completely customize every message **BroomBot** posts
+  * Including tagging the pull request creator in the message
+  * Including the name, avatar, description and overall appearance of the bot
+* Customize the deployment of **BroomBot** in Azure
+
+![BroomBot Features](img/features.png)
 ## Deploying BroomBot
 
 **BroomBot** is quickly and conveniently deployable into any Azure DevOps organization. Check out [**BroomBot**'s deployment guide](deployment.md) for more information.
