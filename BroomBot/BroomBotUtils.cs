@@ -65,34 +65,15 @@ namespace BroomBot
             Dictionary<GitPullRequest, bool> stalePRs,
             string warningPrefix,
             int warningCount,
-            string warningMessage)
+            string warningMessage,
+            string abandonMessage)
         {
             List<GitPullRequest> pullCollection = new List<GitPullRequest>();
-            WebApiCreateTagRequestData newLabel = new WebApiCreateTagRequestData
-            {
-                Name = string.Format("{0}: (UTC) {1}", warningPrefix, DateTime.UtcNow.ToString("g"))
-            };
+            string commentMessage = string.Empty;
 
             foreach (KeyValuePair<GitPullRequest, bool> pr in stalePRs)
             {
-                // Add a comment to the PR describing that it's stale
-                Comment comment = new Comment
-                {
-                    // STRING UPDATE
-                    Content = string.Format(warningMessage, pr.Key.CreatedBy.Id)
-                };
-                List<Comment> commentList = new List<Comment>
-                {
-                    comment
-                };
-                GitPullRequestCommentThread commentThread = new GitPullRequestCommentThread
-                {
-                    Comments = commentList,
-                    Status = CommentThreadStatus.Active
-                };
-                await gitClient.CreateThreadAsync(commentThread, pr.Key.Repository.Id, pr.Key.PullRequestId);
-
-                // Handle the tag updating
+                // Retrieve the tags so we can figure out what we need to remove, how many warnings have been given
                 List<WebApiTagDefinition> allTags = await gitClient.GetPullRequestLabelsAsync(project, pr.Key.Repository.Id, pr.Key.PullRequestId);
 
                 if (!pr.Value)
@@ -104,6 +85,8 @@ namespace BroomBot
                     {
                         await gitClient.DeletePullRequestLabelsAsync(project, pr.Key.Repository.Id, pr.Key.PullRequestId, tag.Id.ToString());
                     }
+
+                    commentMessage = warningMessage;
                 }
                 else
                 {
@@ -112,13 +95,30 @@ namespace BroomBot
 
                     if (botTagCount >= warningCount)
                     {
-                        // no need to add another tag because this PR is going to be abandoned
                         pullCollection.Add(pr.Key);
-                        continue;
+                        commentMessage = abandonMessage;
+                    }
+                    else
+                    {
+                        commentMessage = warningMessage;
                     }
                 }
 
-                // add a tag
+                // Add a comment to the PR describing that it's stale
+                Comment comment = new Comment { Content = string.Format(warningMessage, pr.Key.CreatedBy.Id) };
+                List<Comment> commentList = new List<Comment> { comment };
+                GitPullRequestCommentThread commentThread = new GitPullRequestCommentThread
+                {
+                    Comments = commentList,
+                    Status = CommentThreadStatus.Active
+                };
+                await gitClient.CreateThreadAsync(commentThread, pr.Key.Repository.Id, pr.Key.PullRequestId);
+
+                // add a tag for this run
+                WebApiCreateTagRequestData newLabel = new WebApiCreateTagRequestData
+                {
+                    Name = string.Format("{0}: (UTC) {1}", warningPrefix, DateTime.UtcNow.ToString("g"))
+                };
                 await gitClient.CreatePullRequestLabelAsync(newLabel, pr.Key.Repository.Id, pr.Key.PullRequestId);
             }
 

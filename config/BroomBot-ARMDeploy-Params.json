@@ -6,13 +6,13 @@
             "metadata": {
                 "description": "The name of the function app for BroomBot"
             },
-            "value": "broombotapp54"
+            "value": "broombotapp55"
         },
         "storageAccName": {
             "metadata": {
                 "description": "The name of the storage account for BroomBot"
             },
-            "value": "broombotstorage54"
+            "value": "broombotstorage55"
         },
         "storageAccountType": {
             "metadata": {
