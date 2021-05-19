@@ -60,7 +60,7 @@
             "metadata": {
                 "description": "Name of the branch to use when deploying (Default = master)."
             },
-            "value": "master"
+            "value": "main"
         }
     }
 }
