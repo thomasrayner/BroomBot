@@ -16,7 +16,7 @@ If you are deploying **BroomBot**, one should safely be able to assume that you 
 
 **BroomBot** requires a service account that has the ability to interact with pull requests in the Azure DevOps organization you wish to deploy **BroomBot** to.
 
-* Follow Microsoft's document on [creating a new Azure Active Directory user](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/add-users-azure-active-directory) while taking care to give your **BroomBot** service account an appropriate name and description (and maybe even an avatar - see [imgs folder](https://github.com/thomasrayner/BroomBot/tree/main/imgs)).
+* Follow Microsoft's document on [creating a new Azure Active Directory user](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/add-users-azure-active-directory) while taking care to give your **BroomBot** service account an appropriate name and description (and maybe even an avatar - see [img folder](https://github.com/thomasrayner/BroomBot/tree/main/img)).
 * Follow Microsoft's document on [invite **BroomBot**'s service account to your Azure DevOps organization](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/add-external-user?view=azure-devops).
 
 ## Deployment
@@ -25,9 +25,10 @@ If you are deploying **BroomBot**, one should safely be able to assume that you 
 
 You can deploy **BroomBot** without creating your own fork by cloning this repo and deploying it. Alternatively, you can create your own fork and deploy that instead. The advantage of cloning is that you don't have to keep your own fork up to date. The advantage of forking is that you can make changes to how **BroomBot** actually functions that may suit your own needs better than the **BroomBot** everybody else uses.
 
-> You do **not** need to create your own fork of **BroomBot** to customize:
+> ### You do **not** need to create your own fork of **BroomBot** to customize:
 >
-> * Any of the attributes that belong to the **BroomBot** service account (name, avatar, description, etc.)> * Any of the names or values of the resources create in Azure that are used by **BroomBot** (storage accounts, Azure Functions, etc.)
+> * Any of the attributes that belong to the **BroomBot** service account (name, avatar, description, etc.)
+> * Any of the names or values of the resources create in Azure that are used by **BroomBot** (storage accounts, Azure Functions, etc.)
 > * Any of the messages and visible strings that **BroomBot** puts into stale pull requests (warning message, abandonment message, tag prefix)
 > * Any of the details related to how frequently **BroomBot** sweeps or how many warnings it gives prior to abandoning a stale pull request
 
@@ -97,6 +98,6 @@ New-AzResourceGroup -Name $rgName -Location 'West US 2'
 
 # Deploy the ARM template
 New-AzResourceGroupDeployment -Name 'BroomBotDeployment' -ResourceGroupName $rgName -TemplateParameterFile '.\config\BroomBot-ARMDeploy-Params.json' -TemplateFile '.\BroomBot-ARMDeploy.json'
-
-# The deployment will run, and after some time you will receive output that indicates the ProvisioningState is Succeeded which means your deployment completed correctly
 ```
+
+The deployment will run, and after some time you will receive output that indicates the `ProvisioningState` is `Succeeded` which means your deployment completed correctly.
