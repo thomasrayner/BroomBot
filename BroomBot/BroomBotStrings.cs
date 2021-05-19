@@ -9,6 +9,7 @@ namespace BroomBot
     public class BroomBotStrings
     {
         public string PullRequestIsStale { get; set; }
+        public string PullRequestIsAbandoned { get; set; }
         public string BroomBotName { get; set; }
         public string WarningPrefix { get; set; }
         public string StaleAge { get; set; }

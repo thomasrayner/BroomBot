@@ -78,7 +78,14 @@ namespace BroomBot
                 }
 
                 // tag & update stale PRs and return candidates for abandonment
-                IList<GitPullRequest> abandonmentCandidates = await BroomBotUtils.TagStalePullRequests(gitClient, project, stalePRs, userStrings.WarningPrefix, warningCount, userStrings.PullRequestIsStale);
+                IList<GitPullRequest> abandonmentCandidates = await BroomBotUtils.TagStalePullRequests(
+                    gitClient,
+                    project,
+                    stalePRs,
+                    userStrings.WarningPrefix,
+                    warningCount,
+                    userStrings.PullRequestIsStale,
+                    userStrings.PullRequestIsAbandoned);
                 log.LogInformation($"Found {abandonmentCandidates.Count} pull requests that are due to be abandoned");
 
                 // PRs that need to be abandoned

@@ -4,10 +4,6 @@
             "Value": "@<{0}> - This pull request is stale and may be abandoned soon if you don't do something.",
             "Description": "The message that is written by BroomBot as a comment on a stale pull request. Use @<{0}> to tag the creator of the pull request."
         },
-        "PullRequestIsAbandoned": {
-            "Value": "@<{0}> - This pull request is being abandoned due to inactivity.",
-            "Description": "The message that is written by BroomBot as a comment on a stale pull request when it is being abandoned. Use @<{0}> to tag the creator of the pull request."
-        },
         "BroomBotName": {
             "Value": "BroomBot-test@thomasraynerlive.onmicrosoft.com",
             "Description": "The Author.Id/UPN property of the service account running BroomBot."
@@ -17,7 +13,7 @@
             "Description": "A prefix on the tags BroomBot applies to stale pull requests. The tag has the format 'WarningPrefix: (UTC) DateTimeStamp' so maintainers and administrators may keep track of BroomBot's warnings."
         },
         "StaleAge": {
-            "Value": "0",
+            "Value": "336",
             "Description": "The number of hours a pull request can go without any activity before the pull request is considered stale. 336 hours (default) is 14 days."
         },
         "WarningCount": {
