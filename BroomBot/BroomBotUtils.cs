@@ -105,7 +105,7 @@ namespace BroomBot
                 }
 
                 // Add a comment to the PR describing that it's stale
-                Comment comment = new Comment { Content = string.Format(warningMessage, pr.Key.CreatedBy.Id) };
+                Comment comment = new Comment { Content = string.Format(commentMessage, pr.Key.CreatedBy.Id) };
                 List<Comment> commentList = new List<Comment> { comment };
                 GitPullRequestCommentThread commentThread = new GitPullRequestCommentThread
                 {
