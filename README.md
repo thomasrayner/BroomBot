@@ -30,7 +30,7 @@ GitHub has a rich ecosystem of bots and helper tools that (among other things) e
 
 Click button below to quickly deploy into your org.
 
-![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fthomasrayner%2FBroomBot%2Fmain%2FBroomBot-ARMDeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fthomasrayner%2FBroomBot%2Fmain%2FBroomBot-ARMDeploy.json)
 
 For advanced deployment scenarios or more information check out [**BroomBot**'s deployment guide](deployment.md).
 
